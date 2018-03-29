@@ -1,5 +1,7 @@
 package ru.tinkoff.ru.seminar.ui;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +18,13 @@ import io.reactivex.schedulers.Schedulers;
 import ru.tinkoff.ru.seminar.R;
 import ru.tinkoff.ru.seminar.api.model.ApiResponse;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Currencies> {
 
     private static final String ERROR_TEXT = "Error!";
 
     private EditText currencyEditText;
-    private Button calculateButton;
+    private Button firstWayButton;
+    private Button secondWayButton;
     private ProgressBar progressBar;
     private TextView resultTextView;
 
@@ -34,27 +37,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         currencyEditText = findViewById(R.id.currencyEditText);
-        calculateButton = findViewById(R.id.calculateButton);
+        firstWayButton = findViewById(R.id.firstWayButton);
+        secondWayButton = findViewById(R.id.secondWayButton);
         progressBar = findViewById(R.id.progressBar);
         resultTextView = findViewById(R.id.resultTextView);
 
         currencyEditText.addTextChangedListener(new StubTextWatcher() {
             @Override
             public void afterTextChanged(Editable text) {
-                calculateButton.setEnabled(Currencies.contains(text.toString()));
+                firstWayButton.setEnabled(Currencies.contains(text.toString()));
+                secondWayButton.setEnabled(Currencies.contains(text.toString()));
             }
         });
-        calculateButton.setOnClickListener(v -> loadCurrencyRate(currencyEditText.getText().toString()));
+        firstWayButton.setOnClickListener(v -> loadCurrencyRateWay1(currencyEditText.getText().toString()));
+        secondWayButton.setOnClickListener(v -> loadCurrencyRateWay2(currencyEditText.getText().toString()));
     }
 
-
-    @WorkerThread
-    private String loadRate(String currency) throws Exception {
-        ApiResponse rates = App.getInstance().getApi().getRates(currency.toUpperCase()).execute().body();
-        return rates != null ? String.valueOf(rates.getRates().getRate()) : ERROR_TEXT;
-    }
-
-    private void loadCurrencyRate(String currency) {
+    private void loadCurrencyRateWay1(String currency) {
         Single.fromCallable(() -> loadRate(currency))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -67,6 +66,37 @@ public class MainActivity extends AppCompatActivity {
                         rate -> resultTextView.setText(rate),
                         throwable -> resultTextView.setText(ERROR_TEXT)
                 );
+    }
+
+    private Loader<Currencies> loadCurrencyRateWay2(String currency) {
+        return null;
+    }
+
+    @WorkerThread
+    private String loadRate(String currency) throws Exception {
+        ApiResponse rates = App.getInstance().getApi().getRates(currency.toUpperCase()).execute().body();
+        return rates != null ? String.valueOf(rates.getRates().getRate()) : ERROR_TEXT;
+    }
+
+
+    @Override
+    public Loader<Currencies> onCreateLoader(int id, Bundle args) {
+        if (id == 1) {
+            return new CurrencyLoader(this);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Currencies> loader, Currencies data) {
+        if (loader.getId() == 1) {
+            resultTextView.setText((CharSequence) data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Currencies> loader) {
+
     }
 
 }

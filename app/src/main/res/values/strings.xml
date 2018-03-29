@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Seminar</string>
+    <string name="app_name">Homework_7_Async</string>
     <string name="currency_hint">Валюта</string>
-    <string name="calculate_text">Посчитать</string>
+    <string name="button_way1_text">Первый способ</string>
+    <string name="button_way2_text">Второй способ</string>
     <string name="error_text">Произошла ошибка при загрузке</string>
 </resources>

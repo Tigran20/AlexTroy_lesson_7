@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
+        android:paddingBottom="48dp"
         tools:context="ru.tinkoff.ru.seminar.ui.MainActivity">
 
         <EditText
@@ -19,19 +19,28 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:hint="@string/currency_hint"
-            android:padding="16dp"
             android:inputType="textCapCharacters"
+            android:padding="16dp"
             android:textColor="@android:color/black"
             tools:text="USD" />
 
         <Button
-            android:id="@+id/calculateButton"
+            android:id="@+id/firstWayButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:enabled="false"
             android:padding="16dp"
-            android:text="@string/calculate_text" />
+            android:text="@string/button_way1_text" />
+
+        <Button
+            android:id="@+id/secondWayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:padding="16dp"
+            android:text="@string/button_way2_text" />
 
         <ProgressBar
             android:id="@+id/progressBar"

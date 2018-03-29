@@ -8,7 +8,8 @@ public class Currencies {
 
     private static Set<String> availableCurrencies = new HashSet<>(Arrays.asList(
             "USD",
-            "EUR"
+            "EUR",
+            "GBP"
     ));
 
     public static boolean contains(String currency) {
