@@ -1,20 +1,15 @@
 package ru.tinkoff.ru.seminar.ui;
 
-import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -78,15 +73,17 @@ public class MainActivity extends AppCompatActivity {
 
     private Loader<Currencies> loadCurrencyRateWay2(String currency) {
 
-        App.getInstance().getApi().getRates(currency).enqueue(new Callback<ApiResponse>() {
+        App.getInstance().getApi().getRates(currency.toUpperCase()).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.code() == 1) {
+                if (response.isSuccessful()) {
                     ApiResponse apiResponse = response.body();
-                    resultTextView.setText(apiResponse.getRates().getRate() + "");
+                    String s = apiResponse.getRates().getRate() + "";
+                    resultTextView.setText(s);
                 } else {
                     resultTextView.setText(ERROR_TEXT);
                 }
+
             }
 
             @Override
