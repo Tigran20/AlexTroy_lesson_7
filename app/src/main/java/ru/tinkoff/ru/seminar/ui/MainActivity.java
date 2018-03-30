@@ -6,19 +6,27 @@ import android.os.Bundle;
 import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.tinkoff.ru.seminar.R;
 import ru.tinkoff.ru.seminar.api.model.ApiResponse;
+import ru.tinkoff.ru.seminar.api.model.RateObject;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Currencies> {
+public class MainActivity extends AppCompatActivity {
 
     private static final String ERROR_TEXT = "Error!";
 
@@ -69,6 +77,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private Loader<Currencies> loadCurrencyRateWay2(String currency) {
+
+        App.getInstance().getApi().getRates(currency).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.code() == 1) {
+                    ApiResponse apiResponse = response.body();
+                    resultTextView.setText(apiResponse.getRates().getRate() + "");
+                } else {
+                    resultTextView.setText(ERROR_TEXT);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resultTextView.setText(ERROR_TEXT);
+            }
+        });
         return null;
     }
 
@@ -78,25 +103,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return rates != null ? String.valueOf(rates.getRates().getRate()) : ERROR_TEXT;
     }
 
-
-    @Override
-    public Loader<Currencies> onCreateLoader(int id, Bundle args) {
-        if (id == 1) {
-            return new CurrencyLoader(this);
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Currencies> loader, Currencies data) {
-        if (loader.getId() == 1) {
-            resultTextView.setText((CharSequence) data);
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Currencies> loader) {
-
-    }
 
 }
